@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#a90012">
+<meta name="description" content="MetrallaPunk-Radio: radio online con catálogo gratuito verificado. Punk, ska, Oi!, cantautores y música libertaria.">
+<title>MetrallaPunk-Radio — Radio online, ruido y autogestión</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div class="logo">METRALLAPUNK <span>RADIO</span></div>
+  <small>RUIDO LIBRE · AUTOGESTIÓN · CULTURA DE CALLE</small>
+</header>
+<main>
+  <section class="hero">
+    <div>
+      <div class="kicker">Radio online · 100% autogestión</div>
+      <h1>Sube el<br><em>volumen.</em></h1>
+      <p class="intro">Radio online con catálogo gratuito y verificado: punk, ska, Oi!, cantautores y canciones con conciencia. Pulsa encender y escucha — sin subir archivos, sin cuentas.</p>
+    </div>
+    <div class="poster" aria-label="Cartel gráfico punk original">
+      <svg viewBox="0 0 360 300" role="img" aria-label="Puño levantado estilizado">
+        <path d="M92 270 L130 170 L163 120 L183 54 L205 42 L220 57 L212 106 L236 63 L257 64 L264 83 L244 125 L271 98 L289 109 L285 130 L259 161 L274 177 L250 270Z" fill="#f4eee5" stroke="#090909" stroke-width="9" stroke-linejoin="round"/>
+        <path d="M183 54 L181 109 M220 57 L207 111 M257 80 L231 128 M130 170 L190 185 L259 161" fill="none" stroke="#090909" stroke-width="8"/>
+        <path d="M55 72 L97 91 L72 104 L104 126 L59 124 L83 151 L38 139 L51 177 L20 156 L25 103Z" fill="#090909"/>
+        <path d="M292 35 L304 69 L337 61 L318 87 L345 107 L311 105 L304 140 L290 109 L258 121 L278 94 L256 73 L288 79Z" fill="#090909"/>
+        <text x="180" y="292" fill="#090909" font-size="21" font-weight="900" text-anchor="middle">NI AMOS NI DUEÑOS</text>
+      </svg>
+      <div class="poster-label">HAZLO TÚ MISMO/A</div>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="radio-title">
+    <div class="panel-head"><h2 id="radio-title">Radio online, directa</h2><span class="live">● EN DIRECTO · CATÁLOGO ONLINE</span></div>
+    <div class="track">
+      <div class="track-title" id="trackTitle">Conectando con la radio online…</div>
+      <div class="track-sub" id="trackSub">Cargando catálogo del servidor…</div>
+    </div>
+    <audio id="audio" preload="metadata"></audio>
+    <progress id="progress" value="0" max="100" aria-label="Progreso de la canción"></progress>
+    <div class="controls controls-radio">
+      <button id="play">▶ Encender radio</button>
+      <button class="secondary" id="retry">↻ Reintentar</button>
+    </div>
+    <div class="options">
+      <label for="volume">Volumen <input id="volume" type="range" min="0" max="1" step=".01" value=".8"></label>
+      <span id="count">0 pistas en el catálogo</span>
+    </div>
+    <p class="status" id="status" role="status">Conectando al catálogo online… Pulsa “Encender radio”.</p>
+    <p class="sync-note">Bucle aleatorio sin parar. Sincronía total simultánea solo con streaming Icecast (ver <code>servidor/README.md</code> y <code>streamUrl</code> en <code>catalogo.json</code>).</p>
+    <div class="catalog-toggle">
+      <button class="secondary small" id="creditosBtn" aria-expanded="false" aria-controls="catalogoBox">Créditos ▾</button>
+    </div>
+    <div class="catalog-box" id="catalogoBox" hidden>
+      <h3 class="list-title">Catálogo online</h3>
+      <ol class="catalog" id="lista"></ol>
+      <p class="credits" id="creditos"></p>
+    </div>
+  </section>
+
+  <section class="panel panel-local" aria-labelledby="local-title">
+    <div class="panel-head"><h2 id="local-title">Tus archivos</h2><span class="live live-local">MODO LOCAL · SOLO EN TU EQUIPO</span></div>
+    <p class="intro-local">Tiene su propio reproductor: al usarlo se pausa la radio online (y viceversa).</p>
+    <div class="track">
+      <div class="track-title" id="localTitle">Sin archivos propios</div>
+      <div class="track-sub" id="localSub">Carga MP3/OGG/WAV de tu equipo.</div>
+    </div>
+    <audio id="localAudio" preload="metadata"></audio>
+    <div class="controls controls-local">
+      <button class="secondary" id="localPrev" aria-label="Anterior local">⏮ Anterior</button>
+      <label class="file-label" for="files">＋ Archivos propios</label>
+      <input id="files" type="file" accept="audio/*" multiple>
+      <button class="secondary" id="localNext" aria-label="Siguiente local">Siguiente ⏭</button>
+      <button class="secondary" id="localPlay">▶ Escuchar</button>
+    </div>
+    <p class="status" id="localStatus" role="status">En espera.</p>
+  </section>
+
+  <section class="manifesto">
+    <article><h3>Radio online</h3><p>Catálogo en servidor con licencias verificadas. Entra y escucha: la música ya está ahí.</p></article>
+    <article><h3>Créditos a la vista</h3><p>Cada pista muestra artista, licencia y atribución. Apoya a los grupos.</p></article>
+    <article><h3>De abajo hacia arriba</h3><p>Más cultura independiente, más voces críticas y menos intermediarios.</p></article>
+  </section>
+</main>
+<footer>
+  MetrallaPunk-Radio es una radio online con catálogo alojado en servidor. Solo incluye pistas con licencia verificada (ver <code>catalogo.json</code>). “Libre de derechos” no autoriza por sí solo la emisión: revisa cada licencia.
+</footer>
+<script src="script.js" defer></script>
+</body>
+</html>

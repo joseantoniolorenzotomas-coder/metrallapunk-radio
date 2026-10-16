@@ -1,0 +1,10 @@
+# Audios: GitHub no admite archivos >100MB (tenemos hasta ~315MB) ni conviene
+# subir 1.7GB. Los MP3 se alojan aparte (ver servidor/README.md: R2, VPS).
+# Se publica el código + catalogo.json; musica/README.md explica la estructura.
+musica/*.mp3
+musica/*.m4a
+musica/*.ogg
+musica/*.wav
+musica/*.flac
+musica/*.opus
+.DS_Store

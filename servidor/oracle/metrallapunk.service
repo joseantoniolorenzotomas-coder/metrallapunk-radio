@@ -1,0 +1,14 @@
+[Unit]
+Description=MetrallaPunk-Radio AutoDJ (Liquidsoap)
+After=network.target icecast2.service
+Wants=icecast2.service
+
+[Service]
+User=radio
+Group=radio
+ExecStart=/usr/bin/liquidsoap /home/radio/radio.liq
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
