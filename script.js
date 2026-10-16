@@ -23,6 +23,7 @@
 
   let tracks = [], order = [], pos = 0; // pos = índice dentro de order
   let streamMode = false;
+  let radioPlaying = false, failCount = 0; // la radio solo avanza sola si está sonando
   let localTracks = [], localPos = -1, localUrl = null;
 
   const TXT_ON = '▶ Encender radio';
@@ -74,13 +75,16 @@
     pauseLocal(true);
     audio.play().then(() => {
       playBtn.textContent = TXT_OFF;
+      radioPlaying = true; failCount = 0;
       status.textContent = 'Radio en marcha, en bucle sin parar. ¡Volumen y resistencia!';
     }).catch(() => {
+      radioPlaying = false;
       status.textContent = 'El navegador bloqueó el inicio. Pulsa “Encender radio”.';
       playBtn.textContent = TXT_ON;
     });
   }
   function pauseRadio(silent = false) {
+    radioPlaying = false;
     audio.pause();
     playBtn.textContent = TXT_ON;
     if (!silent) status.textContent = 'Radio en pausa. Pulsa “Encender radio” para seguir.';
@@ -100,16 +104,26 @@
   });
 
   audio.addEventListener('ended', () => {
-    if (streamMode) return;
+    if (streamMode || !radioPlaying) return;
     loadRadio(pos + 1, true); // bucle infinito, re-mezcla al agotar
+  });
+  audio.addEventListener('playing', () => { failCount = 0; });
+  audio.addEventListener('error', () => {
+    if (!audio.src || streamMode || !radioPlaying) return; // en reposo no toca nada (ni al modo local)
+    failCount++;
+    if (failCount > tracks.length + 2) {
+      pauseRadio();
+      status.textContent = 'Demasiadas pistas fallan. Revisa /musica/ y catalogo.json, o usa “Tus archivos”.';
+      return;
+    }
+    status.textContent = 'Esta pista falla, salto a la siguiente…';
+    setTimeout(() => { if (radioPlaying) loadRadio(pos + 1, true); }, 800);
   });
   audio.addEventListener('timeupdate', () => {
     if (audio.duration && isFinite(audio.duration)) progress.value = (audio.currentTime / audio.duration) * 100;
   });
-  audio.addEventListener('error', () => {
-    if (!audio.src || streamMode) return;
-    status.textContent = 'Esta pista falla, salto a la siguiente…';
-    setTimeout(() => loadRadio(pos + 1, true), 800);
+  localAudio.addEventListener('error', () => {
+    if (localAudio.src) localStatus.textContent = 'Este archivo no se puede reproducir. Prueba con otro.';
   });
 
   async function cargarCatalogo() {
