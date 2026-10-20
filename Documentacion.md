@@ -6,12 +6,18 @@ Radio online con catálogo propio en servidor: `index.html` + `style.css` + `scr
 Estado del catálogo: estructura lista, **0 pistas verificadas**. No afirmar que ya hay 100 hasta registrarlas.
 
 ## 2. Cómo probarla
+**Forma fácil (recomendada):** doble clic en `iniciar.command` (macOS) o
+`python3 servir.py`. Abre el navegador solo y elige un puerto libre (8000, 8001…):
+no falla aunque ya tengas otro servidor abierto.
+
+**Forma manual:**
 1. Sirve la carpeta por HTTP (el `fetch` de `catalogo.json` falla con `file://`):
    `python3 -m http.server 8000` → abre `http://localhost:8000`
+   Si sale `OSError: [Errno 48] Address already in use`, ya hay algo en el 8000:
+   usa `python3 -m http.server 8001` u otro número.
 2. Pulsa **Encender radio**. La interacción inicial la exige el navegador.
-3. Usa pausa, anterior, siguiente, volumen y mezcla aleatoria.
-4. La lista del catálogo muestra título, artista y licencia de cada pista.
-5. Respaldo local: **Cargar archivos propios** reproduce archivos de tu equipo sin subirlos.
+3. Usa pausa, volumen y el botón **Créditos** para ver el catálogo.
+4. Respaldo local: **＋ Archivos propios** reproduce archivos de tu equipo sin subirlos.
 
 ## 3. Servidor y despliegue (100 canciones)
 Ver `servidor/README.md` y `musica/README.md`.
