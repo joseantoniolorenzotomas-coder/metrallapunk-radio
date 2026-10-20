@@ -3,20 +3,24 @@
 
 - Reserva el primer puerto libre de verdad (8000, 8001, 8002...). Sin carreras.
 - Reutiliza el puerto al reiniciar (no falla por TIME_WAIT).
+- Soporta peticiones Range: se puede avanzar/retroceder dentro de una canción,
+  igual que en un hosting real (GitHub Pages, R2...).
 - Abre el navegador solo.
 - Ctrl+C en la ventana para parar.
 
 Uso:  python3 servir.py        (o doble clic en iniciar.command)
 """
+import os
+import re
 import socket
 import socketserver
-import sys
 import threading
 import webbrowser
 from http.server import SimpleHTTPRequestHandler
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent
+RANGO = re.compile(r"^bytes=(\d*)-(\d*)$")
 
 
 class Servidor(socketserver.ThreadingTCPServer):
@@ -42,12 +46,98 @@ def reservar_puerto(inicio=8000, intentos=25):
     return s, s.getsockname()[1]
 
 
+class LectorLimitado:
+    """Lee solo `restantes` bytes de un fichero (para respuestas 206)."""
+
+    def __init__(self, fichero, restantes):
+        self.f = fichero
+        self.restantes = restantes
+
+    def read(self, n=-1):
+        if self.restantes <= 0:
+            return b""
+        if n is None or n < 0 or n > self.restantes:
+            n = self.restantes
+        datos = self.f.read(n)
+        self.restantes -= len(datos)
+        return datos
+
+    def close(self):
+        self.f.close()
+
+
 class Handler(SimpleHTTPRequestHandler):
+    protocol_version = "HTTP/1.1"  # necesario para Range y para audio fluido
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(RAIZ), **kwargs)
 
     def log_message(self, fmt, *args):
         pass  # consola limpia
+
+    def handle_one_request(self):
+        try:
+            super().handle_one_request()
+        except (BrokenPipeError, ConnectionResetError):
+            self.close_connection = True
+
+    def end_headers(self):
+        if not getattr(self, "_ranges_enviados", False):
+            self.send_header("Accept-Ranges", "bytes")
+            self._ranges_enviados = True
+        super().end_headers()
+
+    def send_head(self):
+        cabecera = self.headers.get("Range")
+        if not cabecera:
+            return super().send_head()
+
+        ruta = self.translate_path(self.path)
+        if os.path.isdir(ruta) or not os.path.isfile(ruta):
+            return super().send_head()
+
+        m = RANGO.match(cabecera.strip())
+        if not m:
+            return super().send_head()
+
+        try:
+            f = open(ruta, "rb")
+        except OSError:
+            self.send_error(404, "File not found")
+            return None
+
+        tam = os.fstat(f.fileno()).st_size
+        inicio_s, fin_s = m.groups()
+
+        if inicio_s == "":
+            # sufijo: los últimos N bytes
+            if fin_s == "":
+                f.close()
+                return super().send_head()
+            inicio = max(tam - int(fin_s), 0)
+            fin = tam - 1
+        else:
+            inicio = int(inicio_s)
+            fin = int(fin_s) if fin_s else tam - 1
+
+        if inicio >= tam or inicio > fin:
+            f.close()
+            self.send_response(416)
+            self.send_header("Content-Range", f"bytes */{tam}")
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+            return None
+
+        fin = min(fin, tam - 1)
+        f.seek(inicio)
+        largo = fin - inicio + 1
+
+        self.send_response(206)
+        self.send_header("Content-Type", self.guess_type(ruta))
+        self.send_header("Content-Range", f"bytes {inicio}-{fin}/{tam}")
+        self.send_header("Content-Length", str(largo))
+        self.end_headers()
+        return LectorLimitado(f, largo)
 
 
 def main():

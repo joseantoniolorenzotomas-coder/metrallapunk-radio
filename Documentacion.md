@@ -8,7 +8,8 @@ Estado del catálogo: estructura lista, **0 pistas verificadas**. No afirmar que
 ## 2. Cómo probarla
 **Forma fácil (recomendada):** doble clic en `iniciar.command` (macOS) o
 `python3 servir.py`. Abre el navegador solo y elige un puerto libre (8000, 8001…):
-no falla aunque ya tengas otro servidor abierto.
+no falla aunque ya tengas otro servidor abierto. Además soporta peticiones
+*Range*, así que puedes avanzar dentro de una canción igual que en un hosting real.
 
 **Forma manual:**
 1. Sirve la carpeta por HTTP (el `fetch` de `catalogo.json` falla con `file://`):
