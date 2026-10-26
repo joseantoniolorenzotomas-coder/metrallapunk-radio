@@ -24,6 +24,6 @@
 
 ## Pendiente
 - Elegir dominio/nombre definitivo y servidor (ver `Documentacion.md` § servidor).
-- Completar biblioteca de 100+ canciones verificadas en `catalogo.json` + `/musica/`. Estado actual: estructura lista, 0 pistas verificadas — no afirmar que ya hay 100.
+- Completar biblioteca de 100+ canciones verificadas en `catalogo.json` + `/musica/`. **Estado actual**: 40 pistas cargadas, **0 pistas verificadas legalmente** — no afirmar que ya hay 100. Se requiere servir por HTTP para funcionar.
 - Decidir fase 2 de streaming 24/7 sincronizado (Icecast/AzuraCast): alojamiento, ancho de banda y derechos.
 - Añadir página de créditos visible generada desde `catalogo.json`.

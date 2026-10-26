@@ -3,7 +3,7 @@
 ## 1. Qué es ahora
 Radio online con catálogo propio en servidor: `index.html` + `style.css` + `script.js` cargan `catalogo.json` y reproducen `/musica/`. El oyente pulsa **Encender radio** y escucha sin aportar archivos. El modo local (subir archivos propios) queda solo como respaldo.
 
-Estado del catálogo: estructura lista, **0 pistas verificadas**. No afirmar que ya hay 100 hasta registrarlas.
+**Estado comprobado (HTTP)**: Catálogo accesible en `http://localhost:8000`. **40 pistas** registradas en `catalogo.json`, **41 archivos** en `/musica/` (0 referencias rotas). Requiere servir por HTTP (el `fetch` falla con `file://`). Aún **0 pistas verificadas legalmente** — no afirmar que hay 100 hasta completar las verificaciones correspondientes.
 
 ## 2. Cómo probarla
 **Forma fácil (recomendada):** doble clic en `iniciar.command` (macOS) o

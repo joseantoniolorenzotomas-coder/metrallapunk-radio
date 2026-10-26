@@ -41,7 +41,11 @@
 
   function renderLista() {
     if (!lista) return;
-    lista.innerHTML = '';
+    if (typeof lista.replaceChildren === 'function') {
+      lista.replaceChildren();
+    } else {
+      lista.innerHTML = '';
+    }
     const actual = tracks[order[pos]];
     tracks.forEach((t) => {
       const li = document.createElement('li');
@@ -131,6 +135,7 @@
       const res = await fetch('catalogo.json?v=' + Date.now(), { cache: 'no-store' });
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
+      if (!data || typeof data !== 'object') throw new Error('Catálogo inválido');
       if (data.streamUrl) {
         // Directo Icecast: TODOS oyen lo mismo a la vez (sincronía real)
         streamMode = true;
